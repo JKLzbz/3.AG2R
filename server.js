@@ -871,7 +871,7 @@ app.use((req, res, next) => {
   if (!AUTH_ENABLED) return next();
 
   // Public paths bypass auth
-  if (PUBLIC_PATHS.some(p => req.path === p) || req.path.startsWith('/css/')) {
+  if (PUBLIC_PATHS.includes(req.path) || req.path.endsWith('.png') || req.path.endsWith('.css') || req.path.endsWith('.json') || req.path.endsWith('.webmanifest') || req.path.startsWith('/css/')) {
     return next();
   }
 
@@ -1587,6 +1587,32 @@ app.post('/icon-workshop/save', (req, res) => {
   });
 });
 
+// --- Remote Control ---
+app.post('/api/remote/control', (req, res) => {
+  const { action } = req.body;
+  if (!action) return res.status(400).json({ error: 'Action required' });
+  
+  let cmd = '';
+  if (action === 'lock') {
+    cmd = 'rundll32.exe user32.dll,LockWorkStation';
+  } else if (action === 'sleep') {
+    cmd = 'rundll32.exe powrprof.dll,SetSuspendState 0,1,0';
+  } else if (action === 'mute') {
+    cmd = 'powershell -ExecutionPolicy Bypass -File ' + path.join(__dirname, 'mute.ps1');
+  } else {
+    return res.status(400).json({ error: 'Invalid action' });
+  }
+
+  exec(cmd, (error) => {
+    if (error) {
+      log('Remote', `Failed to execute ${action}: ${error.message}`);
+      return res.status(500).json({ error: error.message });
+    }
+    log('Remote', `Successfully executed ${action}`);
+    res.json({ ok: true });
+  });
+});
+
 // Browse files on the laptop
 app.get('/icon-workshop/browse', (req, res) => {
   let dir = req.query.dir || path.join(__dirname, 'public');
@@ -1641,8 +1667,8 @@ async function start() {
   // Generate/load SSL certs
   const sslOpts = ensureCerts();
 
-  // Create HTTPS server
-  const server = createHttpsServer(sslOpts, app);
+  // Create HTTP server for Tailscale compatibility
+  const server = createHttpServer(app);
 
   // WebSocket server on the same HTTPS server
   const wss = new WebSocketServer({ server });
@@ -1693,7 +1719,7 @@ async function start() {
   await flagsReady;
 
   server.listen(PORT, () => {
-    log('Server', `AG2R running on https://localhost:${PORT}`);
+    log('Server', `AG2R running on http://localhost:${PORT}`);
     if (TUNNEL_URL) {
       log('Server', `Tunnel URL: ${TUNNEL_URL}`);
     }

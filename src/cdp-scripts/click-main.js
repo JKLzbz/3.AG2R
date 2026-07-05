@@ -25,7 +25,14 @@ export function buildMainClickScript(safeClickId, safeLabel) {
           document.getElementById('chat') ||
           document.getElementById('cascade');
       } else if (source === 'left') {
-        root = document.querySelector('.bg-sidebar');
+        const sidebars = document.querySelectorAll('.bg-sidebar');
+        for (const el of sidebars) {
+          if (el.getAttribute('role') === 'navigation' || el.querySelector('[data-tab-id]') == null && el.classList.contains('flex-col')) {
+            root = el;
+            break;
+          }
+        }
+        if (!root) root = sidebars[0];
       } else if (source === 'right') {
         // Anchor-based: find via tab-id buttons or close-aux-pane
         const tabBtn = document.querySelector('[data-tab-id="overview"], [data-tab-id="review"]');

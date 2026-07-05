@@ -8,7 +8,7 @@
   "theme_color": "#090e17",
   "icons": [
     {
-      "src": "/ag2r-icon.png",
+      "src": "/apple-touch-icon-admin.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

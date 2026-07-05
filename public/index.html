@@ -6,9 +6,9 @@
   <meta name="description" content="AG2R — Mobile remote interface for Antigravity AI coding sessions">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" type="image/png" href="/ag2r-icon.png">
-  <link rel="apple-touch-icon" href="/ag2r-icon.png">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" href="/apple-touch-icon-admin.png?v=9">
+  <link rel="apple-touch-icon" href="/apple-touch-icon-admin.png?v=9">
+  <link rel="manifest" href="/manifest.json?v=9">
   <meta name="apple-mobile-web-app-title" content="AG2R">
   <meta name="theme-color" content="#090e17">
   <title>AG2R</title>
@@ -21,12 +21,30 @@
 <body>
   <div id="app" class="app">
 
+    <!-- God-Mode Remote Control FAB -->
+    <div id="remote-fab-container" class="fab-container">
+      <button id="remote-fab-main" class="fab-main" aria-label="Remote Control">
+        <span class="material-symbols-rounded">settings_remote</span>
+      </button>
+      <div id="remote-fab-menu" class="fab-menu">
+        <button class="fab-item" data-action="lock" title="Lock Screen">
+          <span class="material-symbols-rounded">lock</span>
+        </button>
+        <button class="fab-item" data-action="sleep" title="Sleep PC">
+          <span class="material-symbols-rounded">bedtime</span>
+        </button>
+        <button class="fab-item" data-action="mute" title="Mute PC">
+          <span class="material-symbols-rounded">volume_off</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Header — minimal, AG's captured components handle sidebar toggles -->
     <header id="header" class="header">
       <button id="sidebar-toggle" class="icon-btn" aria-label="Toggle sidebar">
         <span class="material-symbols-rounded">menu</span>
       </button>
-      <img src="/ag2r-icon.png" alt="AG2R" class="header-icon" width="32" height="32">
+      <img src="/apple-touch-icon-admin.png?v=9" alt="AG2R" class="header-icon" width="32" height="32">
       <h1 class="header-title">AG2R</h1>
       <div id="connection-status" class="connection-dot" data-status="disconnected" title="Disconnected"></div>
       <button id="refresh-btn" class="icon-btn" aria-label="Refresh" title="Refresh">

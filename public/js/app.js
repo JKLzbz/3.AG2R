@@ -2895,3 +2895,106 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 initPushNotifications();
+/* =========================================
+   God-Mode Remote Control Logic
+   ========================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  const fabContainer = document.getElementById('remote-fab-container');
+  const fabMain = document.getElementById('remote-fab-main');
+  if (!fabContainer || !fabMain) return;
+
+  // Toggle menu
+  fabMain.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fabContainer.classList.toggle('open');
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', () => {
+    fabContainer.classList.remove('open');
+  });
+
+  // Handle remote actions
+  document.querySelectorAll('.fab-item').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const action = btn.getAttribute('data-action');
+      fabContainer.classList.remove('open');
+      
+      // Visual feedback
+      const originalIcon = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-rounded">check</span>';
+      setTimeout(() => btn.innerHTML = originalIcon, 1000);
+
+      try {
+        const response = await fetch('/api/remote/control', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action })
+        });
+        if (!response.ok) {
+          console.error('Remote control failed:', await response.text());
+        }
+      } catch (err) {
+        console.error('Network error during remote control:', err);
+      }
+    });
+  });
+});
+// --- Make FAB Draggable ---
+document.addEventListener('DOMContentLoaded', () => {
+  const fabContainer = document.getElementById('remote-fab-container');
+  const fabMain = document.getElementById('remote-fab-main');
+  if (!fabContainer || !fabMain) return;
+
+  let isDragging = false;
+  let currentX;
+  let currentY;
+  let initialX;
+  let initialY;
+  let xOffset = 0;
+  let yOffset = 0;
+  let dragStartTime = 0;
+
+  fabMain.addEventListener('touchstart', dragStart, { passive: false });
+  fabMain.addEventListener('touchend', dragEnd, { passive: false });
+  fabMain.addEventListener('touchmove', drag, { passive: false });
+
+  fabMain.addEventListener('mousedown', dragStart);
+  document.addEventListener('mouseup', dragEnd);
+  document.addEventListener('mousemove', drag);
+
+  function dragStart(e) {
+    dragStartTime = Date.now();
+    if (e.type === 'touchstart') {
+      initialX = e.touches[0].clientX - xOffset;
+      initialY = e.touches[0].clientY - yOffset;
+    } else {
+      initialX = e.clientX - xOffset;
+      initialY = e.clientY - yOffset;
+    }
+    if (e.target === fabMain || fabMain.contains(e.target)) {
+      isDragging = true;
+    }
+  }
+
+  function dragEnd(e) {
+    isDragging = false;
+  }
+
+  function drag(e) {
+    if (isDragging) {
+      e.preventDefault();
+      if (e.type === 'touchmove') {
+        currentX = e.touches[0].clientX - initialX;
+        currentY = e.touches[0].clientY - initialY;
+      } else {
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+      }
+      xOffset = currentX;
+      yOffset = currentY;
+      fabContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+    }
+  }
+});

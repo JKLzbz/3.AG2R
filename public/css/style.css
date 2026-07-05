@@ -2590,3 +2590,69 @@ body {
 #chat-content .opacity-0:has([aria-label*="Undo"]) {
   opacity: 1 !important;
 }
+/* =========================================
+   God-Mode Remote Control FAB
+   ========================================= */
+.fab-container {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 12px;
+}
+.fab-main {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fab-main:active { transform: scale(0.9); }
+.fab-main .material-symbols-rounded {
+  font-size: 28px;
+  transition: transform 0.3s;
+}
+.fab-container.open .fab-main .material-symbols-rounded {
+  transform: rotate(45deg);
+}
+.fab-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.9);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fab-container.open .fab-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+.fab-item {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--surface-2);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.1s;
+}
+.fab-item:active { transform: scale(0.9); }
+.fab-item:hover { background-color: var(--surface-3); }
+.fab-item .material-symbols-rounded { font-size: 24px; }

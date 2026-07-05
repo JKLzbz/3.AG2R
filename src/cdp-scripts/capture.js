@@ -167,7 +167,16 @@ export const CAPTURE_SCRIPT = `
   let leftSidebarHtml = null;
   let sidebarAttentionItems = [];
   try {
-    const leftRoot = document.querySelector('.bg-sidebar');
+    const sidebars = document.querySelectorAll('.bg-sidebar');
+    let leftRoot = null;
+    for (const el of sidebars) {
+      if (el.getAttribute('role') === 'navigation' || el.querySelector('[data-tab-id]') == null && el.classList.contains('flex-col')) {
+        leftRoot = el;
+        break;
+      }
+    }
+    if (!leftRoot) leftRoot = sidebars[0]; // fallback
+
     if (leftRoot && leftRoot.offsetParent !== null) {
       const leftTagged = tagInteractives(leftRoot, 'left', true, true);
       const leftClone = leftRoot.cloneNode(true);
